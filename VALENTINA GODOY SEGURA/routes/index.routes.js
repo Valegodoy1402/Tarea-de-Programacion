@@ -1,8 +1,7 @@
 import { Router } from "express";
-import ejemplo from "./ejemplo.routes.js";
+import pedido from "./pedido.routes.js";
 
 const indexRoutes = Router();
-
-indexRoutes.use('/ejemplo', ejemplo);
+indexRoutes.use("/pedidos", pedido);
 
 export default indexRoutes;
