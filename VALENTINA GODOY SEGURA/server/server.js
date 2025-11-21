@@ -7,17 +7,17 @@ export default class Server {
     constructor() {
         this.app = express();
         this.port = process.env.PORT || 3000;
-        this.miapi = '/api/';
+        this.miapi = '/electrodomestico/';
         this.conectarDBMongo();
         this.middlewares();
         this.routes();
     }
 
-    async conectarDBMongo(){
-        if(!db.isConected){
+    async conectarDBMongo() {
+        if (!db.isConected) {
             await db.conectarMongoDB();
         }
-    }    
+    }
 
     middlewares() {
         this.app.use(cors());
@@ -27,16 +27,16 @@ export default class Server {
 
     routes() {
         this.app.use(this.miapi, indexRoutes);
-        this.app.use((req, res) =>{
+        this.app.use((req, res) => {
             res.status(404).json({
                 msg: 'Ruta no encontrada'
             });
-        });        
+        });
     }
-    
+
     listen() {
         this.app.listen(this.port, () => {
-            console.log('Servidor corriendo en puerto', `${this.port}` .yellow);
+            console.log('Servidor corriendo en puerto', `${this.port}`.yellow);
         })
     }
 }

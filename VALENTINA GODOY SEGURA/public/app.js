@@ -6,22 +6,29 @@ document.addEventListener("DOMContentLoaded", () => {
   let idEditar = null;
 
   async function cargarPedidos() {
-    const res = await fetch("/api/pedidos");
+    const res = await fetch("/electrodomestico/pedidos");
     const data = await res.json();
     pedidos = data.pedidos || [];
 
     tabla.innerHTML = "";
     pedidos.forEach(p => {
+      const fechaFormateada = new Date(p.fechaEntrega).toLocaleDateString();
+
+      let badgeColor = "secondary";
+      if (p.estado === "Pendiente") badgeColor = "warning";
+      if (p.estado === "En camino") badgeColor = "primary";
+      if (p.estado === "Entregado") badgeColor = "success";
+
       tabla.insertAdjacentHTML("beforeend", `
         <tr>
           <td>${p.producto}</td>
           <td>${p.cantidad}</td>
           <td>${p.proveedor}</td>
-          <td>${new Date(p.fechaEntrega).toLocaleDateString()}</td>
-          <td>${p.estado}</td>
+          <td>${fechaFormateada}</td>
+          <td><span class="badge bg-${badgeColor}">${p.estado}</span></td>
           <td>
-            <button class="btn btn-sm btn-warning me-1 editar" data-id="${p._id}">Editar</button>
-            <button class="btn btn-sm btn-danger eliminar" data-id="${p._id}">Eliminar</button>
+            <button class="btn btn-sm btn-outline-primary me-1 editar" data-id="${p._id}">Editar</button>
+            <button class="btn btn-sm btn-outline-danger eliminar" data-id="${p._id}">Eliminar</button>
           </td>
         </tr>
       `);
@@ -43,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     if (modoEditar) {
-      await fetch(`/api/pedidos/${idEditar}`, {
+      await fetch(`/electrodomestico/pedidos/${idEditar}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevoPedido)
@@ -51,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
       modoEditar = false;
       idEditar = null;
     } else {
-      await fetch("/api/pedidos", {
+      await fetch("/electrodomestico/pedidos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevoPedido)
@@ -78,12 +85,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function eliminarPedido(e) {
     const id = e.target.dataset.id;
-    const confirmar = confirm("¿Seguro que deseas eliminar este pedido?");
+    const confirmar = confirm("¿Deseas eliminar este pedido?");
     if (!confirmar) return;
 
-    await fetch(`/api/pedidos/${id}`, { method: "DELETE" });
+    await fetch(`/electrodomestico/pedidos/${id}`, { method: "DELETE" });
     cargarPedidos();
   }
 
   cargarPedidos();
+});
+
+document.getElementById("formPedidos").addEventListener("submit", e => {
+  e.preventDefault();
 });
