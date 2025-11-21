@@ -15,7 +15,7 @@ npm install
 
 2. Ejecutar el servidor con nodemon apuntando a index.js:
 
-nodemon src/index.js
+nodemon ./index.js
 
 (O usando el script definido en package.json:)
 
